@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:student_card/models/student.dart';
+import '../screen_one/Screen_Card.dart';
+import '../models/Student.dart';
 
 class EnterInfo extends StatefulWidget {
   @override
@@ -110,10 +111,17 @@ class _EnterInfoState extends State<EnterInfo> {
                           if (_fromKey.currentState!.validate()) {
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_)=>ScreenCard(
-                                Student(id: IDstudent.text, name: NameStudent.text, phoneNumber: PhoneNumber.text, department: Department)
-
-                              ),),
+                              MaterialPageRoute(
+                                builder:
+                                    (_) => ScreenCard(
+                                      student: Student(
+                                        id: IDstudent.text,
+                                        name: NameStudent.text,
+                                        phoneNumber: PhoneNumber.text,
+                                        department: Department,
+                                      ),
+                                    ),
+                              ),
                             );
                           }
                         },
