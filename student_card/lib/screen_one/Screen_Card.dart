@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import '../models/Student.dart';
 
 class ScreenCard extends StatelessWidget {
@@ -8,7 +7,13 @@ class ScreenCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Student Card")),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(
+          "هوية الطالب",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: LayoutBuilder(
@@ -26,64 +31,272 @@ class ScreenCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
+                      color: const Color.fromARGB(10, 0, 0, 0),
                       spreadRadius: 2,
                       blurRadius: 5,
                       offset: const Offset(0, 3),
                     ),
                   ],
                 ),
-                child: Card(
-                  elevation: 8,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                child: Column(
+                  children: [
+                    Card(
+                      color: Color.fromARGB(197, 245, 250, 236),
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            FlutterLogo(),
-                            Container(
-                              padding: EdgeInsets.all(8),
-                              child: const Text(
-                                "University of Nineveh\n      aaasdaskfdskfds       \n      sdfdofpda",
-                                style: TextStyle(
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 70,
+                                  height: 70,
+                                  child: Image.asset(
+                                    'images/n.jpg',
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        textAlign: TextAlign.center,
+                                        "جمهورية العراق",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        " التعليم العالي والبحث العلمي",
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        "جامعة نينوى",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                SizedBox(
+                                  width: 70,
+                                  height: 70,
+                                  child: Image.asset(
+                                    'images/n.jpg',
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              height: 20,
+                              width: 500,
+                              color: Color.fromARGB(153, 143, 3, 3),
+                              child: Text(
+                                " الدراسات الاولية",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
                               ),
                             ),
-                            FlutterLogo(),
+                            Column(
+                              children: [
+                                Directionality(
+                                  textDirection: TextDirection.rtl,
+
+                                  child: ListTile(
+                                    title: Text(
+                                      "الكلية: ${student.colge}  ",
+                                      textAlign: TextAlign.right,
+                                    ),
+                                  ),
+                                ),
+                                Directionality(
+                                  textDirection: TextDirection.rtl,
+
+                                  child: ListTile(
+                                    title: Text(
+                                      "السكن  : ${student.address}",
+                                      textAlign: TextAlign.right,
+                                    ),
+                                  ),
+                                ),
+                                Directionality(
+                                  textDirection: TextDirection.rtl,
+
+                                  child: ListTile(
+                                    title: Text(
+                                      "تريخ الاصدار  : ${student.issueDate}",
+                                      textAlign: TextAlign.right,
+                                    ),
+                                  ),
+                                ),
+                                Directionality(
+                                  textDirection: TextDirection.rtl,
+
+                                  child: ListTile(
+                                    title: Text(
+                                      "تاريخ الانتهاء  : ${student.expiryDate}",
+                                      textAlign: TextAlign.right,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
-                        const Divider(),
-                        ListTile(
-                          leading: const Icon(Icons.person),
-                          title: Text(student.name),
-                          subtitle: const Text("Name Student"),
-                        ),
-                        ListTile(
-                          leading: const Icon(Icons.badge),
-                          title: Text(student.id),
-                          subtitle: const Text("Student ID"),
-                        ),
-                        ListTile(
-                          leading: const Icon(Icons.school),
-                          title: Text(student.department),
-                          subtitle: const Text("Department"),
-                        ),
-                        ListTile(
-                          leading: const Icon(Icons.person),
-                          title: Text(student.phoneNumber ?? "N/A"),
-                          subtitle: const Text("Name Student"),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                    Card(
+                      color: Color.fromARGB(197, 245, 250, 236),
+
+                      elevation: 8,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 70,
+                                  height: 70,
+                                  child: Image.asset(
+                                    'images/n.jpg',
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        textAlign: TextAlign.center,
+                                        "جمهورية العراق",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Text(
+                                        " التعليم العالي والبحث العلمي",
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        "جامعة نينوى",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 8),
+                                SizedBox(
+                                  width: 70,
+                                  height: 70,
+                                  child: Image.asset(
+                                    'images/n.jpg',
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Container(
+                              height: 20,
+                              width: 500,
+                              color: Color.fromARGB(153, 143, 3, 3),
+                              child: Text(
+                                "هوية الطالب",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+
+                            Column(
+                              children: [
+                                Directionality(
+                                  textDirection: TextDirection.rtl,
+
+                                  child: ListTile(
+                                    title: Text(
+                                      "اسم الطالب: ${student.name}",
+                                      textAlign: TextAlign.right,
+                                    ),
+                                  ),
+                                ),
+                                Directionality(
+                                  textDirection: TextDirection.rtl,
+
+                                  child: ListTile(
+                                    title: Text(
+                                      "سنة التوليد : ${student.age}",
+                                      textAlign: TextAlign.right,
+                                    ),
+                                  ),
+                                ),
+                                Directionality(
+                                  textDirection: TextDirection.rtl,
+
+                                  child: ListTile(
+                                    title: Text(
+                                      "رقم الطالب: ${student.id}",
+                                      textAlign: TextAlign.right,
+                                    ),
+                                  ),
+                                ),
+                                Directionality(
+                                  textDirection: TextDirection.rtl,
+
+                                  child: ListTile(
+                                    title: Text(
+                                      "رقم الهاتف: ${student.phoneNumber ?? "N/A"}",
+                                      textAlign: TextAlign.right,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               );
             },

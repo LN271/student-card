@@ -15,11 +15,17 @@ class _EnterInfoState extends State<EnterInfo> {
   final IDstudent = TextEditingController();
   final PhoneNumber = TextEditingController();
   String? Department;
+  final address = TextEditingController();
+  final age = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Enter Information Student'),
+        title: Text(
+          'ادخال معلومات الطالب',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
       ),
       body: Stack(
@@ -41,91 +47,168 @@ class _EnterInfoState extends State<EnterInfo> {
 
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.4),
+                    color: const Color.fromARGB(14, 255, 255, 255),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: SingleChildScrollView(
                     padding: EdgeInsets.all(10),
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+
                       children: [
-                        Container(
+                        Directionality(
+                          textDirection: TextDirection.rtl,
                           child: TextFormField(
+                            textAlign: TextAlign.right,
                             controller: NameStudent,
                             decoration: const InputDecoration(
-                              labelText: 'Name Student',
+                              label: Text("اسم الطالب"),
                             ),
+                            validator: (v) {
+                              if (v!.isEmpty) {
+                                return 'Please enter your name';
+                              }
+                              if (!RegExp(
+                                r"^[\u0600-\u06FFa-zA-Z\s]+$",
+                              ).hasMatch(v)) {
+                                return "enter valid name";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: TextFormField(
+                            controller: IDstudent,
+                            keyboardType: TextInputType.number,
+                            textAlign: TextAlign.right,
+                            decoration: const InputDecoration(
+                              labelText: "رقم الهوية",
+                            ),
+                            validator: (v) {
+                              if (v == null || v.isEmpty || v.length > 9) {
+                                return ' must enter ID student';
+                              }
+                              if (!RegExp(r"[0-9]+$").hasMatch(v)) {
+                                return "must enter number";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        Padding(padding: EdgeInsets.all(2)),
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+
+                          child: TextFormField(
+                            textAlign: TextAlign.right,
+                            controller: PhoneNumber,
+                            keyboardType: TextInputType.phone,
+                            decoration: const InputDecoration(
+                              label: Text("رقم الهاتف "),
+                            ),
+                            validator: (v) {
+                              if (v == null || v.length != 11) {
+                                return ' Enter phone vaild number ';
+                              }
+                              if (!RegExp(r"[0-9]+$").hasMatch(v)) {
+                                return "must enter number";
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        Padding(padding: EdgeInsets.all(2)),
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: DropdownButtonFormField<String>(
+                            value: Department,
+                            decoration: const InputDecoration(
+                              labelText: "الكلية",
+                              labelStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            items: const [
+                              DropdownMenuItem(
+                                value: 'تكنولوجيا المعلومات',
+                                child: Text('تكنولوجيا المعلومات'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'الطب',
+                                child: Text('الطب'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'القانون',
+                                child: Text('القانون'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'التمريض',
+                                child: Text('التمريض'),
+                              ),
+                              DropdownMenuItem(
+                                value: 'صيدلة',
+                                child: Text('صيدلة'),
+                              ),
+                            ],
+                            onChanged:
+                                (value) => setState(() => Department = value),
                             validator:
-                                (v) =>
-                                    v!.isEmpty
-                                        ? 'Please enter your name'
+                                (value) =>
+                                    value == null
+                                        ? 'Please select a department'
                                         : null,
                           ),
                         ),
-                        TextFormField(
-                          controller: IDstudent,
-                          keyboardType: TextInputType.number,
-                          decoration: const InputDecoration(
-                            labelText: 'ID Student',
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+
+                          child: TextFormField(
+                            textAlign: TextAlign.right,
+                            controller: address,
+                            decoration: const InputDecoration(
+                              labelText: 'العنوان',
+                            ),
+                            validator: (v) {
+                              if (v!.isEmpty) {
+                                return ' enter your address';
+                              }
+                              if (!RegExp(
+                                r"^[\u0600-\u06FFa-zA-Z\s/]+$",
+                              ).hasMatch(v)) {
+                                return "enter valid address";
+                              }
+                              return null;
+                            },
                           ),
-                          validator: (v) {
-                            if (v == null || v.isEmpty || v.length > 9) {
-                              return ' must enter ID student';
-                            }
-                            return null;
-                          },
                         ),
-                        Padding(padding: EdgeInsets.all(2)),
-                        TextFormField(
-                          controller: PhoneNumber,
-                          keyboardType: TextInputType.phone,
-                          decoration: const InputDecoration(
-                            labelText: 'Phone number',
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+
+                          child: TextFormField(
+                            textAlign: TextAlign.right,
+                            keyboardType: TextInputType.datetime,
+                            controller: age,
+                            decoration: const InputDecoration(
+                              labelText: 'سنة الولدة',
+                            ),
+                            validator:
+                                (v) => v!.isEmpty ? ' enter your age' : null,
                           ),
-                          validator: (v) {
-                            if (v == null || v.length != 11) {
-                              return ' Enter phone number';
-                            }
-                            return null;
-                          },
-                        ),
-                        Padding(padding: EdgeInsets.all(2)),
-                        DropdownButtonFormField<String>(
-                          // hint: const Text('Select Department'),
-                          value: Department,
-                          decoration: const InputDecoration(
-                            labelText: "Department",
-                          ),
-                          items: const [
-                            DropdownMenuItem(
-                              value: 'IT',
-                              child: Text('Information Technology'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Medicine',
-                              child: Text('Medicine'),
-                            ),
-                            DropdownMenuItem(value: 'Law', child: Text('Law')),
-                            DropdownMenuItem(
-                              value: 'Nursing',
-                              child: Text('Nursing'),
-                            ),
-                            DropdownMenuItem(
-                              value: 'Pharmacy',
-                              child: Text('Pharmacy'),
-                            ),
-                          ],
-                          onChanged:
-                              (value) => setState(() => Department = value),
-                          validator:
-                              (value) =>
-                                  value == null
-                                      ? 'Please select a department'
-                                      : null,
                         ),
                         const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: () {
                             if (_fromKey.currentState!.validate()) {
+                              final DateTime now = DateTime.now();
+                              final String issue =
+                                  "${now.year}/${now.month}/${now.day}";
+                              final DateTime expiryDate = now.add(
+                                Duration(days: 365),
+                              );
+                              final String expiry =
+                                  "${expiryDate.year}/${expiryDate.month}/${expiryDate.day}";
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -135,14 +218,18 @@ class _EnterInfoState extends State<EnterInfo> {
                                           id: IDstudent.text,
                                           name: NameStudent.text,
                                           phoneNumber: PhoneNumber.text,
-                                          department: Department!,
+                                          colge: Department!,
+                                          address: address.text,
+                                          issueDate: issue,
+                                          expiryDate: expiry,
+                                          age: age.text,
                                         ),
                                       ),
                                 ),
                               );
                             }
                           },
-                          child: const Text("submit"),
+                          child: const Text("ارسال"),
                         ),
                       ],
                     ),
