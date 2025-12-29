@@ -1,3 +1,6 @@
+// ignore: depend_on_referenced_packages
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../screen_one/Screen_Card.dart';
 import '../models/Student.dart';
@@ -17,8 +20,19 @@ class _EnterInfoState extends State<EnterInfo> {
   String? Department;
   final address = TextEditingController();
   final age = TextEditingController();
+  File? _selectedImage;
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        _selectedImage = File(image.path);
+      });
+    }
+  }
 
   @override
+  // ignore: unused_element
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -30,209 +44,158 @@ class _EnterInfoState extends State<EnterInfo> {
       ),
       body: Stack(
         children: [
-          Container(
-            child: Image.asset(
-              'images/n.jpg',
-              fit: BoxFit.cover,
-              height: double.infinity,
-              width: double.infinity,
-              alignment: Alignment.center,
-            ),
+          Positioned.fill(
+            child: Image.asset('images/n.jpg', fit: BoxFit.cover),
           ),
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
+          Center(
+            child: Container(
+              margin: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.8),
+                borderRadius: BorderRadius.circular(10),
+              ),
               child: Form(
                 key: _fromKey,
-
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(14, 255, 255, 255),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.all(10),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-
-                      children: [
-                        Directionality(
-                          textDirection: TextDirection.rtl,
-                          child: TextFormField(
-                            textAlign: TextAlign.right,
-                            controller: NameStudent,
-                            decoration: const InputDecoration(
-                              label: Text("اسم الطالب"),
-                            ),
-                            validator: (v) {
-                              if (v!.isEmpty) {
-                                return 'Please enter your name';
-                              }
-                              if (!RegExp(
-                                r"^[\u0600-\u06FFa-zA-Z\s]+$",
-                              ).hasMatch(v)) {
-                                return "enter valid name";
-                              }
-                              return null;
-                            },
-                          ),
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                        onTap: _pickImage,
+                        child: CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.grey[300],
+                          backgroundImage:
+                              _selectedImage != null
+                                  ? FileImage(_selectedImage!)
+                                  : null,
+                          child:
+                              _selectedImage == null
+                                  ? Icon(
+                                    Icons.add_a_photo,
+                                    size: 40,
+                                    color: Colors.grey[700],
+                                  )
+                                  : null,
                         ),
-                        Directionality(
-                          textDirection: TextDirection.rtl,
-                          child: TextFormField(
-                            controller: IDstudent,
-                            keyboardType: TextInputType.number,
-                            textAlign: TextAlign.right,
-                            decoration: const InputDecoration(
-                              labelText: "رقم الهوية",
-                            ),
-                            validator: (v) {
-                              if (v == null || v.isEmpty || v.length > 9) {
-                                return ' must enter ID student';
-                              }
-                              if (!RegExp(r"[0-9]+$").hasMatch(v)) {
-                                return "must enter number";
-                              }
-                              return null;
-                            },
-                          ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'اضغط لرفع الصورة ',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
-                        Padding(padding: EdgeInsets.all(2)),
-                        Directionality(
-                          textDirection: TextDirection.rtl,
-
-                          child: TextFormField(
-                            textAlign: TextAlign.right,
-                            controller: PhoneNumber,
-                            keyboardType: TextInputType.phone,
-                            decoration: const InputDecoration(
-                              label: Text("رقم الهاتف "),
-                            ),
-                            validator: (v) {
-                              if (v == null || v.length != 11) {
-                                return ' Enter phone vaild number ';
-                              }
-                              if (!RegExp(r"[0-9]+$").hasMatch(v)) {
-                                return "must enter number";
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                        Padding(padding: EdgeInsets.all(2)),
-                        Directionality(
+                      ),
+                      const SizedBox(height: 20),
+                      _bulidTextField(
+                        controller: NameStudent,
+                        label: "اسم الطالب",
+                        validator:
+                            (v) =>
+                                v!.isEmpty
+                                    ? 'يرجى ادخال الاسم'
+                                    : (!RegExp(
+                                          r"^[\u0600-\u06FFa-zA-Z\s]+$",
+                                        ).hasMatch(v)
+                                        ? "اسم غير صالح"
+                                        : null),
+                      ),
+                      _bulidTextField(
+                        controller: IDstudent,
+                        label: "رقم الهوية",
+                        isNumber: true,
+                        validator:
+                            (v) =>
+                                (v == null || v.length > 9)
+                                    ? 'تأكد من رقم الهوية'
+                                    : null,
+                      ),
+                      _bulidTextField(
+                        controller: PhoneNumber,
+                        label: "رقم الهاتف",
+                        isNumber: true,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) {
+                            return null;
+                          }
+                          if (!RegExp(r'^[0-9]+$').hasMatch(v)) {
+                            return 'يجب إدخال أرقام فقط';
+                          }
+                          if (v.length != 11) {
+                            return 'يجب أن يكون الرقم 11 مرتبة';
+                          }
+                          return null;
+                        },
+                      ),
+                      _bulidTextField(
+                        controller: address,
+                        label: "العنوان",
+                        validator:
+                            (v) => v!.isEmpty ? 'يرجى ادخال العنوان' : null,
+                      ),
+                      _bulidTextField(
+                        controller: age,
+                        label: "سنة التوليد",
+                        isNumber: true,
+                        validator: (v) {
+                          if (v == null || v.isEmpty) {
+                            return 'يرجى ادخال سنة التوليد';
+                          }
+                          if (!RegExp(r'^[0-9/]+$').hasMatch(v)) {
+                            return 'ادخال رقم صحيح ';
+                          }
+                          return null;
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: Directionality(
                           textDirection: TextDirection.rtl,
                           child: DropdownButtonFormField<String>(
                             value: Department,
                             decoration: const InputDecoration(
                               labelText: "الكلية",
-                              labelStyle: TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
                             ),
-                            items: const [
-                              DropdownMenuItem(
-                                value: 'تكنولوجيا المعلومات',
-                                child: Text('تكنولوجيا المعلومات'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'الطب',
-                                child: Text('الطب'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'القانون',
-                                child: Text('القانون'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'التمريض',
-                                child: Text('التمريض'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'صيدلة',
-                                child: Text('صيدلة'),
-                              ),
-                            ],
+                            items:
+                                [
+                                      'تكنولوجيا المعلومات',
+                                      'الطب',
+                                      'القانون',
+                                      'التمريض',
+                                      'صيدلة',
+                                    ]
+                                    .map(
+                                      (item) => DropdownMenuItem(
+                                        value: item,
+                                        child: Text(item),
+                                      ),
+                                    )
+                                    .toList(),
                             onChanged:
                                 (value) => setState(() => Department = value),
                             validator:
                                 (value) =>
-                                    value == null
-                                        ? 'Please select a department'
-                                        : null,
+                                    value == null ? 'يرجى اختيار الكلية' : null,
                           ),
                         ),
-                        Directionality(
-                          textDirection: TextDirection.rtl,
-
-                          child: TextFormField(
-                            textAlign: TextAlign.right,
-                            controller: address,
-                            decoration: const InputDecoration(
-                              labelText: 'العنوان',
-                            ),
-                            validator: (v) {
-                              if (v!.isEmpty) {
-                                return ' enter your address';
-                              }
-                              if (!RegExp(
-                                r"^[\u0600-\u06FFa-zA-Z\s/]+$",
-                              ).hasMatch(v)) {
-                                return "enter valid address";
-                              }
-                              return null;
-                            },
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 50,
+                            vertical: 10,
                           ),
                         ),
-                        Directionality(
-                          textDirection: TextDirection.rtl,
-
-                          child: TextFormField(
-                            textAlign: TextAlign.right,
-                            keyboardType: TextInputType.datetime,
-                            controller: age,
-                            decoration: const InputDecoration(
-                              labelText: 'سنة الولدة',
-                            ),
-                            validator:
-                                (v) => v!.isEmpty ? ' enter your age' : null,
-                          ),
+                        onPressed: _submitForm,
+                        child: const Text(
+                          "ارسال",
+                          style: TextStyle(fontSize: 18),
                         ),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () {
-                            if (_fromKey.currentState!.validate()) {
-                              final DateTime now = DateTime.now();
-                              final String issue =
-                                  "${now.year}/${now.month}/${now.day}";
-                              final DateTime expiryDate = now.add(
-                                Duration(days: 365),
-                              );
-                              final String expiry =
-                                  "${expiryDate.year}/${expiryDate.month}/${expiryDate.day}";
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (_) => ScreenCard(
-                                        student: Student(
-                                          id: IDstudent.text,
-                                          name: NameStudent.text,
-                                          phoneNumber: PhoneNumber.text,
-                                          colge: Department!,
-                                          address: address.text,
-                                          issueDate: issue,
-                                          expiryDate: expiry,
-                                          age: age.text,
-                                        ),
-                                      ),
-                                ),
-                              );
-                            }
-                          },
-                          child: const Text("ارسال"),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -241,5 +204,78 @@ class _EnterInfoState extends State<EnterInfo> {
         ],
       ),
     );
+  }
+
+  Widget _bulidTextField({
+    required TextEditingController controller,
+    required String label,
+    required String? Function(String?) validator,
+    bool isNumber = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(right: 5, bottom: 5),
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+          Directionality(
+            textDirection: TextDirection.rtl,
+            child: TextFormField(
+              controller: controller,
+              textAlign: TextAlign.right,
+              keyboardType:
+                  isNumber ? TextInputType.number : TextInputType.text,
+              validator: validator,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 10,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _submitForm() {
+    if (_fromKey.currentState!.validate()) {
+      final now = DateTime.now();
+      final expiryDate = now.add(const Duration(days: 365 * 2));
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (_) => ScreenCard(
+                student: Student(
+                  id: IDstudent.text,
+                  name: NameStudent.text,
+                  phoneNumber: PhoneNumber.text,
+                  colge: Department!,
+                  address: address.text,
+                  issueDate: "${now.year}/${now.month}/${now.day}",
+                  expiryDate:
+                      "${expiryDate.year}/${expiryDate.month}/${expiryDate.day}",
+                  age: age.text,
+                  imagePath: _selectedImage?.path,
+                ),
+              ),
+        ),
+      );
+    }
   }
 }
